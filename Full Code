@@ -1,0 +1,275 @@
+#include <GL/gl.h>
+#include <stdio.h>
+#include <math.h>
+#include <GL/glut.h>
+#include <stdlib.h>
+int weatherState = 0;  // 0: sunny, 1: cloudy, 2: rainy
+float carPositions[3] = {100, 250, 400};  // Initial positions of the cars
+float carSpeed = 2.0;  // Speed of the cars
+
+void circle(GLfloat rx, GLfloat ry, GLfloat cx, GLfloat cy)
+{
+    glBegin(GL_POLYGON);
+    for (int i = 0; i <= 360; i++)
+    {
+        float angle = i * 3.1416 / 180;
+        float x = rx * cos(angle);
+        float y = ry * sin(angle);
+        glVertex2f((x + cx), (y + cy));
+    }
+    glEnd();
+}
+
+void init(void)
+{
+    glClearColor(0.0, 0.9, 0.9, 0.0);
+    glMatrixMode(GL_PROJECTION);
+    gluOrtho2D(0, 500, 0, 500);
+}
+
+void clouds()
+{
+    if (weatherState == 1 || weatherState == 2)  // Show clouds in cloudy or rainy weather
+    {
+        glColor3ub(255, 255, 255);
+        circle(20, 30, 460, 460);
+        circle(15, 20, 445, 460);
+        circle(15, 20, 475, 460);
+
+        circle(20, 30, 390, 420);
+        circle(15, 20, 405, 420);
+        circle(15, 20, 375, 420);
+    }
+}
+
+void rain()
+{
+    if (weatherState == 2)  // Show rain in rainy weather
+    {
+        glColor3ub(0, 0, 255);
+        for (int i = 0; i < 100; i++)
+        {
+            int x = rand() % 500;
+            int y = rand() % 500;
+            glBegin(GL_LINES);
+            glVertex2f(x, y);
+            glVertex2f(x + 5, y - 10);
+            glEnd();
+        }
+    }
+}
+
+void mountains()
+{
+    glColor3ub(102, 51, 0);  // Brown mountains
+
+    // Mountain 1
+    glBegin(GL_TRIANGLES);
+    glVertex2d(50, 300);
+    glVertex2d(150, 450);
+    glVertex2d(250, 300);
+    glEnd();
+
+    // Mountain 2
+    glBegin(GL_TRIANGLES);
+    glVertex2d(200, 300);
+    glVertex2d(300, 450);
+    glVertex2d(400, 300);
+    glEnd();
+}
+
+void trees()
+{
+    // Tree 1 trunk (beside mountain 1)
+    glColor3ub(139, 69, 19);
+    glBegin(GL_POLYGON);
+    glVertex2d(60, 150);
+    glVertex2d(70, 150);
+    glVertex2d(70, 220);
+    glVertex2d(60, 220);
+    glEnd();
+
+    // Tree 1 leaves
+    glColor3ub(0, 128, 0);
+    circle(30, 40, 65, 230);
+
+    // New Tree trunk (upper side of the road)
+    glColor3ub(139, 69, 19);
+    glBegin(GL_POLYGON);
+    glVertex2d(250, 150);
+    glVertex2d(260, 150);
+    glVertex2d(260, 220);
+    glVertex2d(250, 220);
+    glEnd();
+
+    // New Tree leaves
+    glColor3ub(0, 128, 0);
+    circle(30, 40, 255, 230);
+}
+
+void drawCar(int x, int y, unsigned char bodyR, unsigned char bodyG, unsigned char bodyB, unsigned char hoodR, unsigned char hoodG, unsigned char hoodB)
+{
+    // Car body with specified color
+    glColor3ub(bodyR, bodyG, bodyB);
+    glBegin(GL_POLYGON);
+    glVertex2d(x, y);
+    glVertex2d(x + 100, y);
+    glVertex2d(x + 100, y + 50);
+    glVertex2d(x, y + 50);
+    glEnd();
+
+    // Car hood with specified color
+    glColor3ub(hoodR, hoodG, hoodB);
+    glBegin(GL_POLYGON);
+    glVertex2d(x + 15, y + 50);
+    glVertex2d(x + 85, y + 50);
+    glVertex2d(x + 75, y + 75);
+    glVertex2d(x + 25, y + 75);
+    glEnd();
+
+    // Car windows
+    glColor3ub(173, 216, 230);  // Light blue windows
+    glBegin(GL_POLYGON);
+    glVertex2d(x + 25, y + 55);
+    glVertex2d(x + 40, y + 55);
+    glVertex2d(x + 35, y + 70);
+    glVertex2d(x + 30, y + 70);
+    glEnd();
+
+    glBegin(GL_POLYGON);
+    glVertex2d(x + 60, y + 55);
+    glVertex2d(x + 75, y + 55);
+    glVertex2d(x + 70, y + 70);
+    glVertex2d(x + 65, y + 70);
+    glEnd();
+
+    // Wheels
+    glColor3ub(0, 0, 0);  // Black wheels
+    circle(20, 20, x + 25, y - 5);  // Left wheel
+    circle(20, 20, x + 75, y - 5);  // Right wheel
+
+    // Wheel rims
+    glColor3ub(192, 192, 192);  // Silver rims
+    circle(10, 10, x + 25, y - 5);  // Left rim
+    circle(10, 10, x + 75, y - 5);  // Right rim
+}
+
+void display(void)
+{
+    glClear(GL_COLOR_BUFFER_BIT);  // Clear the color buffer
+
+    // Set sky color based on weather state
+    if (weatherState == 3) {  // Night
+        glBegin(GL_POLYGON);
+        glColor3ub(10, 10, 30);  // Dark blue for night
+        glVertex2d(0, 300);
+        glVertex2d(500, 300);
+        glColor3ub(0, 0, 50);  // Darker blue
+        glVertex2d(500, 500);
+        glVertex2d(0, 500);
+        glEnd();
+
+        // Draw stars (optional)
+        glColor3ub(255, 255, 255);  // White stars
+        for (int i = 0; i < 100; i++) {
+            glBegin(GL_POINTS);
+            glVertex2f(rand() % 500, 300 + rand() % 200);
+            glEnd();
+        }
+    } else {
+        // Existing sky gradient for sunny, cloudy, or rainy
+        glBegin(GL_POLYGON);
+        glColor3ub(0, 191, 255);  // Light blue
+        glVertex2d(0, 300);
+        glVertex2d(500, 300);
+        glColor3ub(0, 135, 255);  // Darker blue
+        glVertex2d(500, 500);
+        glVertex2d(0, 500);
+        glEnd();
+    }
+
+    // Draw mountains, road, trees, cars, sun, clouds, and rain
+    mountains();
+    glColor3ub(50, 50, 50);  // Dark gray road
+    glBegin(GL_POLYGON);
+    glVertex2d(0, 0);
+    glVertex2d(500, 0);
+    glVertex2d(500, 300);
+    glVertex2d(0, 300);
+    glEnd();
+
+    glColor3ub(255, 255, 0);  // Yellow stripes
+    glBegin(GL_POLYGON);
+    glVertex2d(0, 145);
+    glVertex2d(500, 145);
+    glVertex2d(500, 155);
+    glVertex2d(0, 155);
+    glEnd();
+
+    trees();
+    drawCar(carPositions[0], 150, 0, 0, 255, 0, 0, 200);  // First car: Blue with red hood
+    drawCar(carPositions[1], 150, 255, 0, 0, 0, 0, 200);  // Second car: Red with black hood
+    drawCar(carPositions[2], 150, 0, 255, 0, 255, 255, 0);  // Third car: Green body with yellow hood
+
+    // Draw sun
+    glColor3ub(255, 215, 0);  // Yellow sun
+    circle(25, 30, 175, 450);
+
+    // Draw clouds if needed
+    clouds();
+
+    // Draw rain if needed
+    rain();
+
+    glFlush();
+}
+
+int carsMoving = 0;  // 0: cars stationary, 1: cars moving
+
+void update(int value)
+{
+    if (carsMoving)  // Move cars only if they are in motion
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            carPositions[i] += carSpeed;
+
+            // Loop the cars back to the start if they go off-screen
+            if (carPositions[i] > 500)
+            {
+                carPositions[i] = -100;  // Reset to the start (off-screen)
+            }
+        }
+    }
+    glutPostRedisplay();  // Redraw the scene
+    glutTimerFunc(30, update, 0);  // Call update again after 30 milliseconds
+}
+
+void keyboard(unsigned char key, int x, int y)
+{
+    if (key == 'w')  // Change weather
+    {
+        weatherState = (weatherState + 1) % 4;  // Cycle through weather states
+        glutPostRedisplay();
+    }
+    if (key == ' ')  // Spacebar to start/stop car movement
+    {
+        carsMoving = !carsMoving;  // Toggle movement state
+        glutPostRedisplay();
+    }
+}
+
+int main(int argc, char** argv)
+{
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+    glutInitWindowSize(1000, 600);
+    glutInitWindowPosition(100, 100);
+    glutCreateWindow("Car Scene with Mountains, Trees, and Weather");
+    init();
+    glutDisplayFunc(display);
+    glutKeyboardFunc(keyboard);  // Register the keyboard function
+    glutTimerFunc(0, update, 0);  // Start the timer for car movement
+    glutMainLoop();
+    return 0;
+}
