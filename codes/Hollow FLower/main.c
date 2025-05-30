@@ -1,0 +1,109 @@
+#include <windows.h>
+#include <GL/glut.h>
+#include <math.h>
+
+//// Function to initialize OpenGL settings
+void init() {
+    glClearColor(1.0, 1.0, 1.0, 1.0); // Background color
+    glColor3f(0.0, 0.0, 0.0); // Drawing color
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluOrtho2D(-20.0, 20.0, -20.0, 20.0); // Coordinate system
+glTranslatef(+4.0f, 0.5f, 0.2f);
+ glBegin(GL_QUADS); // Each set of 4 vertices form a quad
+ glColor3f(1.0f, 0.0f, 0.0f); // Red
+ glVertex2f(-0.1f, -0.1f); // Define vertices in counter-clockwise (CCW) order
+ glVertex2f( 0.1f, -0.1f); // so that the normal (front-face) is facing you
+ glVertex2f( 0.1f, 0.1f);
+ glVertex2f(-0.1f, 0.1f);
+ glScalef(2,2,0);
+
+ glEnd();
+}
+
+// Function to draw a filled circle
+void drawCircle(float cx, float cy, float radius, int segments) {
+    glBegin(GL_TRIANGLE_FAN);
+    glVertex2f(cx, cy); // Center of circle
+    for (int i = 0; i <= segments; i++) {
+        float theta = i * 2.0f * 3.1415926f / segments;
+        float x = radius * cos(theta);
+        float y = radius * sin(theta);
+        glVertex2f(cx + x, cy + y);
+    }
+    glEnd();
+}
+
+
+// Function to draw the flower petals
+void drawPetals() {
+    // Coordinates of the flower petals
+    float points[6][3][2] = {
+        {{-2.99701, 15.18295}, {2.14942, 10.80848}, {-5.14577, 8.10412}},
+        {{-12.10680, 12.82041}, {-5.74519, 15.09012}, {-7.05074, 7.42012}},
+        {{-14.61568, 3.74983}, {-13.40050, 10.39401}, {-7.41085, 5.42836}},
+        {{-8.01477, -2.95821}, {-13.16120, 1.41626}, {-5.86601, 4.12062}},
+        {{1.09502, -0.59567}, {-5.26659, -2.86538}, {-3.96104, 4.80462}},
+        {{3.60390, 8.47491}, {2.38872, 1.83073}, {-3.60093, 6.79638}},
+    };
+
+    glColor3f(1.0f, 0.5f, 0.0f); // Orange color for petals
+    for (int i = 0; i < 6; i++) {
+        glBegin(GL_TRIANGLES);
+        for (int j = 0; j < 3; j++) {
+            glVertex2f(points[i][j][0], points[i][j][1]);
+        }
+        glEnd();
+    }
+}
+/*
+// Function to draw the lower leaves
+void drawLowerLeaves() {
+    // Coordinates for the lower leaves
+    float lowerLeaves[3][3][2] = {
+        {{-4.77522, 4.22481}, {-6.53518, -5.14545}, {-5.0, -20.0}},
+        {{-1.26009, -10.80652}, {0.0, -5.0}, {-4.15495, -10.54920}},
+        {{-3.44732, -25.21652}, {-17.21401, -6.75370}, {-11.93893, -15.30964}},
+    };
+
+    glColor3f(0.0f, 0.5f, 0.0f); // Green color for leaves
+    for (int i = 0; i < 3; i++) {
+        glBegin(GL_TRIANGLES);
+        for (int j = 0; j < 3; j++) {
+            glVertex2f(lowerLeaves[i][j][0], lowerLeaves[i][j][1]);
+        }
+        glEnd();
+    }
+}*/
+
+// Function to draw the center circle
+void drawCenterCircle() {
+    glColor3f(0.0f, 0.0f, 0.0f); // Black color for circle
+    drawCircle(-5.50589f, 6.11237f, 2.02404f, 50);
+}
+
+// Function to display everything
+void display() {
+    glClear(GL_COLOR_BUFFER_BIT);
+
+      drawPetals();
+    //  drawLowerLeaves();
+    drawCenterCircle();
+
+    glFlush();
+
+
+}
+
+int main(int argc, char** argv) {
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+    glutInitWindowSize(500, 500);
+    glutInitWindowPosition(100, 100);
+    glutCreateWindow("Hollow Flower");
+    init();
+    glutDisplayFunc(display);
+    glutMainLoop();
+    return 0;
+}
+

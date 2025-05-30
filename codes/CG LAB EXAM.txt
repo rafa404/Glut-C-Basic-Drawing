@@ -1,0 +1,253 @@
+MID POINT
+
+#include <windows.h>
+#include <iostream>
+#include <GL/gl.h>
+#include <GL/glut.h>
+
+using namespace std;
+
+int Xc, Yc, R;
+
+void plot(int x, int y) {
+    glBegin(GL_POINTS);
+        glVertex2i(Xc + x, Yc + y);
+        glVertex2i(Xc - x, Yc + y);
+        glVertex2i(Xc + x, Yc - y);
+        glVertex2i(Xc - x, Yc - y);
+        glVertex2i(Xc + y, Yc + x);
+        glVertex2i(Xc - y, Yc + x);
+        glVertex2i(Xc + y, Yc - x);
+        glVertex2i(Xc - y, Yc - x);
+    glEnd();
+}
+
+void MidpointCircle(void) {
+    int x = 0;
+    int y = R;
+    int p = 1 - R;
+
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    while (x <= y) {
+        plot(x, y);
+        if (p < 0) {
+            p += 2 * x + 3;
+        } else {
+            p += 2 * (x - y) + 5;
+            y--;
+        }
+        x++;
+    }
+
+    glFlush();
+}
+
+void myInit(void) {
+    glClearColor(1.0, 1.0, 1.0, 0.0);
+    glColor3f(0.0, 0.0, 0.0);
+    glPointSize(4.0);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluOrtho2D(0.0, 640.0, 0.0, 480.0);
+}
+
+int main(int argc, char** argv) {
+    cout << "Enter the center coordinates:\t";
+    cin >> Xc >> Yc;
+    cout << "Enter the radius:\t";
+    cin >> R;
+
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+    glutInitWindowSize(640, 480);
+    glutInitWindowPosition(100, 150);
+    glutCreateWindow("Midpoint Circle Drawing Algorithm");
+
+    glutDisplayFunc(MidpointCircle);
+    myInit();
+    glutMainLoop();
+}
+
+
+
+FLAG
+
+#include <windows.h>
+#include <GL/glut.h>
+
+void mydisplay() {
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    GLfloat blue[] = {0.0f, 0.0f, 1.0f};
+    GLfloat white[] = {1.0f, 1.0f, 1.0f};
+
+  
+    int stripeHeight = 40; 
+    for (int i = 0; i < 9; ++i) {
+        if (i % 2 == 0) {
+            glColor3fv(blue);
+        } else {
+            glColor3fv(white);
+        }
+        glBegin(GL_POLYGON);
+            glVertex2i(0, i * stripeHeight);
+            glVertex2i(720, i * stripeHeight);
+            glVertex2i(720, (i + 1) * stripeHeight);
+            glVertex2i(0, (i + 1) * stripeHeight);
+        glEnd();
+    }
+
+    glColor3fv(blue);
+    glBegin(GL_POLYGON);
+        glVertex2i(0, 320);
+        glVertex2i(280, 320);
+        glVertex2i(280, 480);
+        glVertex2i(0, 480);
+    glEnd();
+    
+    glColor3fv(white);
+    glBegin(GL_POLYGON);
+        glVertex2i(110, 320);
+        glVertex2i(170, 320);
+        glVertex2i(170, 480);
+        glVertex2i(110, 480);
+    glEnd();
+    glBegin(GL_POLYGON);
+        glVertex2i(0, 410);
+        glVertex2i(280, 410);
+        glVertex2i(280, 370);
+        glVertex2i(0, 370);
+    glEnd();
+
+    glFlush();
+}
+
+void myInit() {
+    glClearColor(1.0, 1.0, 1.0, 1.0);
+    glColor3f(0.0, 0.0, 0.0);
+    glPointSize(4.0);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluOrtho2D(0.0, 720.0, 0.0, 480.0);
+}
+
+int main(int argc, char** argv) {
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+    glutInitWindowSize(720, 480);
+    glutInitWindowPosition(100, 150);
+    glutCreateWindow("Greek Flag Drawing");
+    glutDisplayFunc(mydisplay);
+    myInit();
+    glutMainLoop();
+    return 0;
+}
+
+
+FLOWER
+
+#include <windows.h>
+#include <GL/glut.h>
+#include <math.h>
+
+void init() {
+    glClearColor(1.0, 1.0, 1.0, 1.0);
+    glColor3f(0.0, 0.0, 0.0); 
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluOrtho2D(-20.0, 20.0, -20.0, 20.0);
+}
+
+
+void drawCircle(float cx, float cy, float radius, int segments) {
+    glBegin(GL_TRIANGLE_FAN);
+    glVertex2f(cx, cy); 
+    for (int i = 0; i <= segments; i++) {
+        float theta = i * 2.0f * 3.1415926f / segments;
+        float x = radius * cos(theta);
+        float y = radius * sin(theta);
+        glVertex2f(cx + x, cy + y);
+    }
+    glEnd();
+}
+
+
+
+void drawPetals() {
+    // Coordinates of the flower petals
+    float points[6][3][2] = {
+        {{-2.99701, 15.18295}, {2.14942, 10.80848}, {-5.14577, 8.10412}},
+        {{-12.10680, 12.82041}, {-5.74519, 15.09012}, {-7.05074, 7.42012}},
+        {{-14.61568, 3.74983}, {-13.40050, 10.39401}, {-7.41085, 5.42836}},
+        {{-8.01477, -2.95821}, {-13.16120, 1.41626}, {-5.86601, 4.12062}},
+        {{1.09502, -0.59567}, {-5.26659, -2.86538}, {-3.96104, 4.80462}},
+        {{3.60390, 8.47491}, {2.38872, 1.83073}, {-3.60093, 6.79638}},
+    };
+
+    glColor3f(1.0f, 0.5f, 0.0f); // Orange color for petals
+    for (int i = 0; i < 6; i++) {
+        glBegin(GL_TRIANGLES);
+        for (int j = 0; j < 3; j++) {
+            glVertex2f(points[i][j][0], points[i][j][1]);
+        }
+        glEnd();
+    }
+}
+/*
+// Function to draw the lower leaves
+void drawLowerLeaves() {
+    // Coordinates for the lower leaves
+    float lowerLeaves[3][3][2] = {
+        {{-4.77522, 4.22481}, {-6.53518, -5.14545}, {-5.0, -20.0}},
+        {{-1.26009, -10.80652}, {0.0, -5.0}, {-4.15495, -10.54920}},
+        {{-3.44732, -25.21652}, {-17.21401, -6.75370}, {-11.93893, -15.30964}},
+    };
+
+    glColor3f(0.0f, 0.5f, 0.0f); // Green color for leaves
+    for (int i = 0; i < 3; i++) {
+        glBegin(GL_TRIANGLES);
+        for (int j = 0; j < 3; j++) {
+            glVertex2f(lowerLeaves[i][j][0], lowerLeaves[i][j][1]);
+        }
+        glEnd();
+    }
+}*/
+
+// Function to draw the center circle
+void drawCenterCircle() {
+    glColor3f(0.0f, 0.0f, 0.0f); // Black color for circle
+    drawCircle(-5.50589f, 6.11237f, 2.02404f, 50);
+}
+
+// Function to display everything
+void display() {
+    glClear(GL_COLOR_BUFFER_BIT);
+
+      drawPetals();
+    //  drawLowerLeaves();
+    drawCenterCircle();
+
+    glFlush();
+}
+
+int main(int argc, char** argv) {
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+    glutInitWindowSize(500, 500);
+    glutInitWindowPosition(100, 100);
+    glutCreateWindow("Hollow Flower");
+    init();
+    glutDisplayFunc(display);
+    glutMainLoop();
+    return 0;
+}
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1725267913 source:d:\computer graphics\codes\hollow flower\main.c
+	<windows.h>
+	<GL/glut.h>
+	<math.h>
+

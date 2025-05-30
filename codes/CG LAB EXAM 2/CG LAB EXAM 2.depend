@@ -1,0 +1,5 @@
+# depslib dependency file v1.0
+1719819793 source:d:\computer graphics\codes\cg lab exam 2\main.c
+	<windows.h>
+	<GL/glut.h>
+

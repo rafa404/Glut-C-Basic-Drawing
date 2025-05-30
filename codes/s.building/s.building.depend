@@ -1,0 +1,8 @@
+# depslib dependency file v1.0
+1743096772 source:d:\computer graphics\codes\s.building\main.cpp
+	<windows.h>
+	<GL/glut.h>
+	<math.h>
+
+1743094365 source:d:\computer graphics\codes\s.building\tree.cpp
+
